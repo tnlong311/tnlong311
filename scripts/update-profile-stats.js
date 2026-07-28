@@ -118,7 +118,11 @@ function formatNumber(value) {
 }
 
 function replaceStat(readme, label, value) {
-  const pattern = new RegExp(`(^\\s*\\. ${label}:\\s+\\.*\\s*)[^\\n]*`, "m");
+  const escapedLabel = label.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&");
+  const pattern = new RegExp(
+    `^(.*?\\. ${escapedLabel}:\\s+\\.*\\s*)[^\\n]*`,
+    "m",
+  );
   if (!pattern.test(readme)) throw new Error(`README label not found: ${label}`);
   return readme.replace(pattern, `$1${value}`);
 }
