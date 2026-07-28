@@ -4,9 +4,7 @@ const owner = process.env.GITHUB_USERNAME || "tnlong311";
 const token = process.env.GITHUB_TOKEN;
 const apiVersion = "2026-03-10";
 
-if (!token) {
-  throw new Error("GITHUB_TOKEN is required");
-}
+if (!token) throw new Error("GITHUB_TOKEN is required");
 
 async function github(path, options = {}) {
   const response = await fetch(`https://api.github.com${path}`, {
@@ -20,8 +18,7 @@ async function github(path, options = {}) {
   });
 
   if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`${response.status} ${path}: ${body}`);
+    throw new Error(`${response.status} ${path}: ${await response.text()}`);
   }
 
   return response.json();
@@ -34,7 +31,6 @@ async function getAllRepositories() {
     const batch = await github(
       `/users/${owner}/repos?type=owner&sort=updated&per_page=100&page=${page}`,
     );
-
     repositories.push(...batch);
     if (batch.length < 100) return repositories;
   }
@@ -45,10 +41,7 @@ async function getContributionCount() {
     query($login: String!, $from: DateTime!, $to: DateTime!) {
       user(login: $login) {
         contributionsCollection(from: $from, to: $to) {
-          totalCommitContributions
-          contributionCalendar {
-            totalContributions
-          }
+          contributionCalendar { totalContributions }
         }
       }
     }
@@ -75,11 +68,8 @@ async function getContributionCount() {
     throw new Error(response.errors.map((error) => error.message).join("; "));
   }
 
-  const collection = response.data.user.contributionsCollection;
-  return {
-    totalCommitContributions: collection.totalCommitContributions,
-    totalContributions: collection.contributionCalendar.totalContributions,
-  };
+  return response.data.user.contributionsCollection.contributionCalendar
+    .totalContributions;
 }
 
 async function getContributorStats(repository) {
@@ -100,11 +90,7 @@ async function getContributorStats(repository) {
     }
 
     if (response.status === 204) return null;
-
-    if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`${response.status} ${path}: ${body}`);
-    }
+    if (!response.ok) throw new Error(`${response.status} ${path}`);
 
     const contributors = await response.json();
     return contributors.find((contributor) => contributor.author?.login === owner) || null;
@@ -117,22 +103,73 @@ function formatNumber(value) {
   return Number(value || 0).toLocaleString("en-US");
 }
 
-const valueColumn = 58;
+function escapeXml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
+}
 
-function replaceStat(readme, label, value) {
-  const escapedLabel = label.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&");
-  const pattern = new RegExp(`^(\\s*\\. ${escapedLabel}:).*?$`, "m");
-  if (!pattern.test(readme)) throw new Error(`README label not found: ${label}`);
+function row(y, label, value, color = "#f0f6fc") {
+  const labelWidth = Math.min(420, 24 + label.length * 8.2);
+  const dots = ".".repeat(Math.max(4, Math.floor((656 - labelWidth) / 8)));
 
-  const visibleValue = value.replace(/<[^>]+>/g, "");
-  const prefix = `$1`;
-  const prefixLength = `. ${label}:`.length;
-  const dotCount = Math.max(
-    3,
-    valueColumn - prefixLength - visibleValue.length - 2,
-  );
+  return [
+    `<text x="24" y="${y}" class="label">${escapeXml(label)}</text>`,
+    `<text x="${labelWidth}" y="${y}" class="dots">${dots}</text>`,
+    `<text x="656" y="${y}" text-anchor="end" fill="${color}">${escapeXml(value)}</text>`,
+  ].join("\n");
+}
 
-  return readme.replace(pattern, `${prefix} ${".".repeat(dotCount)} ${value}`);
+function heading(y, title) {
+  return [
+    `<text x="24" y="${y}" class="heading">- ${escapeXml(title)}</text>`,
+    `<line x1="${36 + title.length * 8}" y1="${y - 5}" x2="656" y2="${y - 5}" class="rule" />`,
+  ].join("\n");
+}
+
+function buildSvg({ repositories, commits, contributions, additions, deletions }) {
+  const linesAdded = formatNumber(additions);
+  const linesRemoved = formatNumber(deletions);
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="680" height="744" viewBox="0 0 680 744">
+  <style>
+    text { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 15px; }
+    .title { font-size: 18px; font-weight: 700; fill: #f0f6fc; }
+    .label { fill: #f0f6fc; }
+    .dots { fill: #7d8590; letter-spacing: 2px; }
+    .heading { font-weight: 700; fill: #f0f6fc; }
+    .rule { stroke: #7d8590; stroke-width: 1; }
+  </style>
+  <rect width="680" height="744" rx="12" fill="#161b22" />
+  <text x="24" y="40" class="title">long@github</text>
+  <line x1="142" y1="34" x2="656" y2="34" class="rule" />
+  ${row(82, "OS:", "Fullstack Engineer")}
+  ${row(104, "Uptime:", "est. 2018")}
+  ${row(126, "Host:", "Ho Chi Minh City, Vietnam")}
+  ${row(148, "Domain:", "Fulbright University Vietnam")}
+  ${row(204, "Languages.Programming:", "JavaScript, Python, Ruby")}
+  ${row(226, "Languages.Cloud:", "AWS, Google Cloud Platform")}
+  ${row(248, "Languages.Real:", "Vietnamese, English")}
+  ${row(304, "Hobbies.Software:", "AI Products, SaaS, Backend Systems")}
+  ${row(326, "Hobbies.Hardware:", "Frisbee, Gym, Origami")}
+  ${heading(382, "Contact")}
+  ${row(422, "Email.Work:", "longtn.work@gmail.com")}
+  ${row(444, "GitHub:", "tnlong311")}
+  ${heading(500, "GitHub Stats")}
+  ${row(540, "Repos:", formatNumber(repositories))}
+  ${row(562, "Commits:", formatNumber(commits))}
+  ${row(584, "Contributions.Annual:", formatNumber(contributions))}
+  <text x="24" y="628" class="label">Lines of Code:</text>
+  <text x="224" y="628" class="dots">....................</text>
+  <text x="656" y="628" text-anchor="end">
+    <tspan fill="#2da44e">${escapeXml(linesAdded)}+++</tspan>
+    <tspan fill="#f0f6fc"> / </tspan>
+    <tspan fill="#f85149">${escapeXml(linesRemoved)}---</tspan>
+  </text>
+</svg>`;
 }
 
 async function main() {
@@ -156,34 +193,22 @@ async function main() {
   }
 
   const contributions = await getContributionCount();
-  let readme = await fs.readFile("README.md", "utf8");
-  readme = replaceStat(readme, "Repos", formatNumber(repositories.length));
-  readme = replaceStat(readme, "Commits", formatNumber(commits));
-  readme = replaceStat(
-    readme,
-    "Contributions.Annual",
-    formatNumber(contributions.totalContributions),
-  );
-  readme = replaceStat(
-    readme,
-    "Lines of Code",
-    `<span style="color:#2da44e">${formatNumber(additions)}+++</span> / <span style="color:#cf222e">${formatNumber(deletions)}---</span>`,
-  );
+  const svg = buildSvg({
+    repositories: repositories.length,
+    commits,
+    contributions,
+    additions,
+    deletions,
+  });
 
-  await fs.writeFile("README.md", readme);
-  console.log(
-    JSON.stringify(
-      {
-        repositories: repositories.length,
-        commits,
-        contributions: contributions.totalContributions,
-        additions,
-        deletions,
-      },
-      null,
-      2,
-    ),
-  );
+  await fs.writeFile("assets/profile-stats.svg", svg);
+  console.log(JSON.stringify({
+    repositories: repositories.length,
+    commits,
+    contributions,
+    additions,
+    deletions,
+  }, null, 2));
 }
 
 main().catch((error) => {

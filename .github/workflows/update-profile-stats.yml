@@ -4,6 +4,7 @@ on:
   push:
     paths-ignore:
       - README.md
+      - assets/profile-stats.svg
   schedule:
     - cron: "17 */6 * * *"
   workflow_dispatch:
