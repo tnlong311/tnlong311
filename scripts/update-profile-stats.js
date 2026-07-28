@@ -117,7 +117,7 @@ function formatNumber(value) {
   return Number(value || 0).toLocaleString("en-US");
 }
 
-const valueColumn = 70;
+const valueColumn = 58;
 
 function replaceStat(readme, label, value) {
   const escapedLabel = label.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&");
