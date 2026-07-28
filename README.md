@@ -27,9 +27,9 @@ long@github ──────────────────────�
 ─ GitHub Stats ──────────────────────────────────────────
 
 . Repos: .............................................. 10
-. Commits: ........................................... 264
-. Contributions.Annual: ............................ 2,396
-. Lines of Code: ................. <span style="color:#2da44e">200,308+++</span> / <span style="color:#cf222e">113,827---</span>
+. Commits: ........................................... 274
+. Contributions.Annual: ............................ 2,397
+. Lines of Code: ................. <span style="color:#2da44e">200,807+++</span> / <span style="color:#cf222e">114,062---</span>
 </pre>
 
 <br clear="left">
