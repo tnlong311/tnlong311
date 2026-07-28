@@ -103,6 +103,8 @@ function formatNumber(value) {
   return Number(value || 0).toLocaleString("en-US");
 }
 
+const panelX = 704;
+
 function escapeXml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -117,24 +119,24 @@ function row(y, label, value, color = "#f0f6fc") {
   const dots = ".".repeat(Math.max(4, Math.floor((656 - labelWidth) / 8)));
 
   return [
-    `<text x="24" y="${y}" class="label">${escapeXml(label)}</text>`,
-    `<text x="${labelWidth}" y="${y}" class="dots">${dots}</text>`,
-    `<text x="656" y="${y}" text-anchor="end" fill="${color}">${escapeXml(value)}</text>`,
+    `<text x="${panelX + 24}" y="${y}" class="label">${escapeXml(label)}</text>`,
+    `<text x="${panelX + labelWidth}" y="${y}" class="dots">${dots}</text>`,
+    `<text x="${panelX + 656}" y="${y}" text-anchor="end" fill="${color}">${escapeXml(value)}</text>`,
   ].join("\n");
 }
 
 function heading(y, title) {
   return [
-    `<text x="24" y="${y}" class="heading">- ${escapeXml(title)}</text>`,
-    `<line x1="${36 + title.length * 8}" y1="${y - 5}" x2="656" y2="${y - 5}" class="rule" />`,
+    `<text x="${panelX + 24}" y="${y}" class="heading">- ${escapeXml(title)}</text>`,
+    `<line x1="${panelX + 36 + title.length * 8}" y1="${y - 5}" x2="${panelX + 656}" y2="${y - 5}" class="rule" />`,
   ].join("\n");
 }
 
-function buildSvg({ repositories, commits, contributions, additions, deletions }) {
+function buildSvg({ repositories, commits, contributions, additions, deletions, asciiDataUri }) {
   const linesAdded = formatNumber(additions);
   const linesRemoved = formatNumber(deletions);
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="680" height="744" viewBox="0 0 680 744">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1384" height="744" viewBox="0 0 1384 744">
   <style>
     text { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 15px; }
     .title { font-size: 18px; font-weight: 700; fill: #f0f6fc; }
@@ -143,9 +145,10 @@ function buildSvg({ repositories, commits, contributions, additions, deletions }
     .heading { font-weight: 700; fill: #f0f6fc; }
     .rule { stroke: #7d8590; stroke-width: 1; }
   </style>
-  <rect width="680" height="744" rx="12" fill="#161b22" />
-  <text x="24" y="40" class="title">long@github</text>
-  <line x1="142" y1="34" x2="656" y2="34" class="rule" />
+  <image href="${asciiDataUri}" x="0" y="0" width="680" height="744" preserveAspectRatio="xMidYMid meet" />
+  <rect x="${panelX}" y="0" width="680" height="744" rx="12" fill="#161b22" />
+  <text x="${panelX + 24}" y="40" class="title">long@github</text>
+  <line x1="${panelX + 142}" y1="34" x2="${panelX + 656}" y2="34" class="rule" />
   ${row(82, "OS:", "Fullstack Engineer")}
   ${row(104, "Uptime:", "est. 2018")}
   ${row(126, "Host:", "Ho Chi Minh City, Vietnam")}
@@ -162,9 +165,9 @@ function buildSvg({ repositories, commits, contributions, additions, deletions }
   ${row(540, "Repos:", formatNumber(repositories))}
   ${row(562, "Commits:", formatNumber(commits))}
   ${row(584, "Contributions.Annual:", formatNumber(contributions))}
-  <text x="24" y="628" class="label">Lines of Code:</text>
-  <text x="224" y="628" class="dots">....................</text>
-  <text x="656" y="628" text-anchor="end">
+  <text x="${panelX + 24}" y="628" class="label">Lines of Code:</text>
+  <text x="${panelX + 224}" y="628" class="dots">....................</text>
+  <text x="${panelX + 656}" y="628" text-anchor="end">
     <tspan fill="#2da44e">${escapeXml(linesAdded)}+++</tspan>
     <tspan fill="#f0f6fc"> / </tspan>
     <tspan fill="#f85149">${escapeXml(linesRemoved)}---</tspan>
@@ -193,15 +196,17 @@ async function main() {
   }
 
   const contributions = await getContributionCount();
+  const asciiData = await fs.readFile("assets/profile-ascii.png");
   const svg = buildSvg({
     repositories: repositories.length,
     commits,
     contributions,
     additions,
     deletions,
+    asciiDataUri: `data:image/png;base64,${asciiData.toString("base64")}`,
   });
 
-  await fs.writeFile("assets/profile-stats.svg", svg);
+  await fs.writeFile("assets/profile-card.svg", svg);
   console.log(JSON.stringify({
     repositories: repositories.length,
     commits,
