@@ -117,14 +117,22 @@ function formatNumber(value) {
   return Number(value || 0).toLocaleString("en-US");
 }
 
+const valueColumn = 70;
+
 function replaceStat(readme, label, value) {
   const escapedLabel = label.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&");
-  const pattern = new RegExp(
-    `^(.*?\\. ${escapedLabel}:\\s+\\.*\\s*)[^\\n]*`,
-    "m",
-  );
+  const pattern = new RegExp(`^(\\s*\\. ${escapedLabel}:).*?$`, "m");
   if (!pattern.test(readme)) throw new Error(`README label not found: ${label}`);
-  return readme.replace(pattern, `$1${value}`);
+
+  const visibleValue = value.replace(/<[^>]+>/g, "");
+  const prefix = `$1`;
+  const prefixLength = `. ${label}:`.length;
+  const dotCount = Math.max(
+    3,
+    valueColumn - prefixLength - visibleValue.length - 2,
+  );
+
+  return readme.replace(pattern, `${prefix} ${".".repeat(dotCount)} ${value}`);
 }
 
 async function main() {
