@@ -149,11 +149,14 @@ async function main() {
   readme = replaceStat(readme, "Commits", formatNumber(commits));
   readme = replaceStat(
     readme,
-    "Contributions",
+    "Contributions.Annual",
     formatNumber(contributions.totalContributions),
   );
-  readme = replaceStat(readme, "Lines Added", `${formatNumber(additions)}+++`);
-  readme = replaceStat(readme, "Lines Removed", `${formatNumber(deletions)}---`);
+  readme = replaceStat(
+    readme,
+    "Lines of Code",
+    `<span style="color:#2da44e">${formatNumber(additions)}+++</span> / <span style="color:#cf222e">${formatNumber(deletions)}---</span>`,
+  );
 
   await fs.writeFile("README.md", readme);
   console.log(
