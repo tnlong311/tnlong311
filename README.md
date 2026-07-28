@@ -1,16 +1,33 @@
-## Hi there 👋
+<pre>
+[ ASCII ART PLACEHOLDER ]                    long@github ─────────────────────────────
 
-<!--
-**tnlong311/tnlong311** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+                                             . OS: ......................... Fullstack Engineer
+                                             . Uptime: ..................... est. 2018
+                                             . Host: ....................... Ho Chi Minh City, Vietnam
+                                             . Domain: ..................... Fulbright University Vietnam
 
-Here are some ideas to get you started:
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+                                             . Languages.Programming: ...... JavaScript, Python, Ruby
+                                             . Languages.Cloud: ............ AWS, Google Cloud Platform
+                                             . Languages.Real: ............. Vietnamese, English
+
+
+                                             . Hobbies.Software: ........... AI Products, SaaS, Backend Systems
+                                             . Hobbies.Hardware: ........... Frisbee, Gym, Origami
+
+
+                                             ─ Contact ─────────────────────────────────
+
+                                             . Email.Personal: ............. longtn.work@gmail.com
+                                             . LinkedIn: ................... https://www.linkedin.com/in/longtruongngoc/
+                                             . GitHub: ..................... https://github.com/tnlong311
+
+
+                                             ─ GitHub Stats ────────────────────────────
+
+                                             . Repos: ...................... 10
+                                             . Commits: .................... 265
+                                             . Contributions: .............. 2,388
+                                             . Lines Added: ................. 200,324+++
+                                             . Lines Removed: ............... 113,827---
+</pre>
