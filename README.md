@@ -6,3 +6,9 @@
 ![Visitors](https://visitor-badge.laobi.icu/badge?page_id=tnlong311)
 
 <img src="./assets/profile-card.svg" width="100%" alt="ASCII art portrait and developer profile">
+
+### About me
+
+I like solving logical puzzles. I'm a big fan of rock music. And I actively practice sports.
+
+<img src="./assets/languages.svg" width="620" alt="Donut chart showing the language breakdown of my public repositories">

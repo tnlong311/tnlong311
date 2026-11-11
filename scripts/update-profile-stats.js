@@ -114,6 +114,77 @@ function escapeXml(value) {
     .replaceAll("'", "&apos;");
 }
 
+async function updateLanguageChart(repositories) {
+  const languageCounts = await Promise.all(
+    repositories
+      .filter((repository) => !repository.private)
+      .map((repository) => github(`/repos/${owner}/${encodeURIComponent(repository.name)}/languages`)),
+  );
+  const totals = new Map();
+
+  for (const counts of languageCounts) {
+    for (const [language, bytes] of Object.entries(counts)) {
+      if (bytes > 0) totals.set(language, (totals.get(language) || 0) + bytes);
+    }
+  }
+
+  const ranked = [...totals].sort(
+    ([nameA, bytesA], [nameB, bytesB]) => bytesB - bytesA || nameA.localeCompare(nameB, "en"),
+  );
+  await fs.writeFile("assets/languages.svg", buildLanguageSvg(ranked));
+}
+
+function buildLanguageSvg(ranked) {
+  const total = ranked.reduce((sum, [, bytes]) => sum + bytes, 0);
+  const colors = ["#f26155", "#f59343", "#f3bf57", "#db78ad", "#ffb597", "#ad86e6", "#a95360"];
+  const languages = ranked.slice(0, colors.length);
+  if (ranked.length > colors.length) {
+    const otherBytes = ranked.slice(colors.length - 1).reduce((sum, [, bytes]) => sum + bytes, 0);
+    languages[colors.length - 1] = ["Other", otherBytes];
+  }
+
+  const circumference = 2 * Math.PI * 76;
+  let offset = 0;
+  const segments = [];
+  const legend = [];
+  const description = [];
+
+  for (const [index, [language, bytes]] of languages.entries()) {
+    const share = bytes / total;
+    const length = share * circumference;
+    const percentage = `${(share * 100).toFixed(1)}%`;
+    const color = colors[index];
+    const y = 68 + index * 24;
+    segments.push(`<circle cx="132" cy="144" r="76" stroke="${color}" stroke-dasharray="${length} ${circumference}" stroke-dashoffset="${-offset}" />`);
+    offset += length;
+    legend.push(`<circle cx="276" cy="${y}" r="5" fill="${color}" />
+    <text x="292" y="${y}" dominant-baseline="middle">${escapeXml(language)}</text>
+    <text x="588" y="${y}" dominant-baseline="middle" text-anchor="end" class="muted">${percentage}</text>`);
+    description.push(`${language} ${percentage}`);
+  }
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="620" height="250" viewBox="0 0 620 250" role="img" aria-labelledby="title description">
+  <title id="title">Languages</title>
+  <desc id="description">${escapeXml(description.join(", ") || "No language data available.")}</desc>
+  <style>
+    text { font: 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #f0f6fc; font-variant-numeric: tabular-nums; }
+    .muted { fill: #b3bac5; font-size: 13px; }
+    .heading { font-size: 18px; font-weight: 600; }
+    .top-language { font-weight: 600; }
+  </style>
+  <rect width="620" height="250" rx="12" fill="#161b22" />
+  <text x="24" y="32" class="heading">Languages</text>
+  <line x1="24" y1="45" x2="596" y2="45" stroke="#f59343" stroke-opacity=".45" />
+  <circle cx="132" cy="144" r="76" fill="none" stroke="#30363d" stroke-width="25" />
+  <g fill="none" stroke-width="25" transform="rotate(-90 132 144)">
+    ${segments.join("\n    ")}
+  </g>
+  <text x="132" y="139" text-anchor="middle" class="muted">${total ? "Top language" : "No data"}</text>
+  <text x="132" y="159" text-anchor="middle" class="top-language">${escapeXml(ranked[0]?.[0] || "")}</text>
+  ${legend.join("\n    ")}
+</svg>\n`;
+}
+
 function row(y, label, value, color = "#f0f6fc") {
   const labelWidth = Math.min(420, 24 + label.length * 8.2);
   const dots = ".".repeat(Math.max(4, Math.floor((656 - labelWidth) / 8)));
@@ -207,6 +278,11 @@ async function main() {
   });
 
   await fs.writeFile("assets/profile-card.svg", svg);
+  try {
+    await updateLanguageChart(repositories);
+  } catch (error) {
+    console.warn("Could not update the language chart:", error.message);
+  }
   console.log(JSON.stringify({
     repositories: repositories.length,
     commits,
