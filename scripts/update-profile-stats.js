@@ -24,12 +24,13 @@ async function github(path, options = {}) {
   return response.json();
 }
 
-async function getAllRepositories() {
+async function getAllRepositories(path = `/users/${owner}/repos?type=owner`, options) {
   const repositories = [];
 
   for (let page = 1; ; page += 1) {
     const batch = await github(
-      `/users/${owner}/repos?type=owner&sort=updated&per_page=100&page=${page}`,
+      `${path}&sort=updated&per_page=100&page=${page}`,
+      options,
     );
     repositories.push(...batch);
     if (batch.length < 100) return repositories;
@@ -114,11 +115,22 @@ function escapeXml(value) {
     .replaceAll("'", "&apos;");
 }
 
-async function updateLanguageChart(repositories) {
+async function updateLanguageChart(repositories, languageToken) {
+  const privateOptions = { headers: { Authorization: `Bearer ${languageToken}` } };
+  const privateRepositories = (
+    await getAllRepositories("/user/repos?visibility=private&affiliation=owner", privateOptions)
+  ).filter(
+    (repository) =>
+      repository.private && !repository.fork && !repository.archived && repository.owner.login === owner,
+  );
+
   const languageCounts = await Promise.all(
-    repositories
-      .filter((repository) => !repository.private)
-      .map((repository) => github(`/repos/${owner}/${encodeURIComponent(repository.name)}/languages`)),
+    [...repositories, ...privateRepositories].map((repository) =>
+      github(
+        `/repos/${owner}/${encodeURIComponent(repository.name)}/languages`,
+        repository.private ? privateOptions : undefined,
+      ),
+    ),
   );
   const totals = new Map();
 
@@ -278,10 +290,13 @@ async function main() {
   });
 
   await fs.writeFile("assets/profile-card.svg", svg);
-  try {
-    await updateLanguageChart(repositories);
-  } catch (error) {
-    console.warn("Could not update the language chart:", error.message);
+  const languageToken = process.env.PROFILE_LANGUAGES_TOKEN;
+  if (languageToken) {
+    try {
+      await updateLanguageChart(repositories, languageToken);
+    } catch {
+      console.warn("Could not refresh the language chart. Check PROFILE_LANGUAGES_TOKEN access.");
+    }
   }
   console.log(JSON.stringify({
     repositories: repositories.length,

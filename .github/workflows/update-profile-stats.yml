@@ -24,6 +24,7 @@ jobs:
       - name: Update profile statistics
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROFILE_LANGUAGES_TOKEN: ${{ secrets.PROFILE_LANGUAGES_TOKEN }}
           GITHUB_USERNAME: tnlong311
         run: node scripts/update-profile-stats.js
 
