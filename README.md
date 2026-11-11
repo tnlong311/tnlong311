@@ -7,7 +7,11 @@
 
 ### 💻 About me
 
-I like solving logical puzzles. I'm a big fan of rock music. And I actively practice sports.
+Social introvert - I like meeting people while enjoy being by myself.
+
+I watch AI codes. When I don't, I touch grass and throw some frisbees.
+
+Don't challenge me at board game night, 'cause you won't stand a chance. I have an unbeatable record in tic tac toe. 
 
 ### 📊 GitHub Analytics
 
