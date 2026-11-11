@@ -7,7 +7,7 @@ on:
       - assets/profile-card.svg
       - assets/languages.svg
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 0 * * *"
   workflow_dispatch:
 
 permissions:
@@ -18,10 +18,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check two-day schedule
+        id: cadence
+        if: github.event_name == 'schedule'
+        run: |
+          # Use UTC days since the epoch so the interval holds across month boundaries.
+          day=$(( $(date -u +%s) / 86400 ))
+          if (( day % 2 != 0 )); then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check out profile repository
+        if: steps.cadence.outputs.skip != 'true'
         uses: actions/checkout@v4
 
       - name: Update profile statistics
+        if: steps.cadence.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PROFILE_LANGUAGES_TOKEN: ${{ secrets.PROFILE_LANGUAGES_TOKEN }}
@@ -29,6 +41,7 @@ jobs:
         run: node scripts/update-profile-stats.js
 
       - name: Commit updated README
+        if: steps.cadence.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
