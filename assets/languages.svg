@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="620" height="250" viewBox="0 0 620 250" role="img" aria-labelledby="title description">
   <title id="title">Languages</title>
-  <desc id="description">TypeScript 77.8%, JavaScript 5.0%, PHP 4.0%, Python 3.5%, CSS 3.2%, Dart 1.7%, Other 4.8%</desc>
+  <desc id="description">TypeScript 74.7%, Python 7.3%, JavaScript 4.8%, PHP 3.8%, CSS 3.0%, Dart 1.7%, Other 4.7%</desc>
   <style>
     text { font: 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #f0f6fc; font-variant-numeric: tabular-nums; }
     .muted { fill: #b3bac5; font-size: 13px; }
@@ -12,35 +12,35 @@
   <line x1="24" y1="45" x2="596" y2="45" stroke="#f59343" stroke-opacity=".45" />
   <circle cx="132" cy="144" r="76" fill="none" stroke="#30363d" stroke-width="25" />
   <g fill="none" stroke-width="25" transform="rotate(-90 132 144)">
-    <circle cx="132" cy="144" r="76" stroke="#f26155" stroke-dasharray="371.5235524094832 477.5220833456485" stroke-dashoffset="0" />
-    <circle cx="132" cy="144" r="76" stroke="#f59343" stroke-dasharray="23.90130992095166 477.5220833456485" stroke-dashoffset="-371.5235524094832" />
-    <circle cx="132" cy="144" r="76" stroke="#f3bf57" stroke-dasharray="19.03620849763194 477.5220833456485" stroke-dashoffset="-395.42486233043485" />
-    <circle cx="132" cy="144" r="76" stroke="#db78ad" stroke-dasharray="16.78798635865358 477.5220833456485" stroke-dashoffset="-414.4610708280668" />
-    <circle cx="132" cy="144" r="76" stroke="#ffb597" stroke-dasharray="15.164676027683702 477.5220833456485" stroke-dashoffset="-431.2490571867204" />
-    <circle cx="132" cy="144" r="76" stroke="#ad86e6" stroke-dasharray="8.310711851338908 477.5220833456485" stroke-dashoffset="-446.4137332144041" />
-    <circle cx="132" cy="144" r="76" stroke="#a95360" stroke-dasharray="22.797638279905485 477.5220833456485" stroke-dashoffset="-454.724445065743" />
+    <circle cx="132" cy="144" r="76" stroke="#f26155" stroke-dasharray="356.59057666999325 477.5220833456485" stroke-dashoffset="0" />
+    <circle cx="132" cy="144" r="76" stroke="#f59343" stroke-dasharray="34.917578744394845 477.5220833456485" stroke-dashoffset="-356.59057666999325" />
+    <circle cx="132" cy="144" r="76" stroke="#f3bf57" stroke-dasharray="22.940623367227555 477.5220833456485" stroke-dashoffset="-391.5081554143881" />
+    <circle cx="132" cy="144" r="76" stroke="#db78ad" stroke-dasharray="18.27106928149498 477.5220833456485" stroke-dashoffset="-414.44877878161566" />
+    <circle cx="132" cy="144" r="76" stroke="#ffb597" stroke-dasharray="14.555148750745321 477.5220833456485" stroke-dashoffset="-432.71984806311065" />
+    <circle cx="132" cy="144" r="76" stroke="#ad86e6" stroke-dasharray="7.97667203704161 477.5220833456485" stroke-dashoffset="-447.274996813856" />
+    <circle cx="132" cy="144" r="76" stroke="#a95360" stroke-dasharray="22.270414494750987 477.5220833456485" stroke-dashoffset="-455.2516688508976" />
   </g>
   <text x="132" y="139" text-anchor="middle" class="muted">Top language</text>
   <text x="132" y="159" text-anchor="middle" class="top-language">TypeScript</text>
   <circle cx="276" cy="68" r="5" fill="#f26155" />
     <text x="292" y="68" dominant-baseline="middle">TypeScript</text>
-    <text x="588" y="68" dominant-baseline="middle" text-anchor="end" class="muted">77.8%</text>
+    <text x="588" y="68" dominant-baseline="middle" text-anchor="end" class="muted">74.7%</text>
     <circle cx="276" cy="92" r="5" fill="#f59343" />
-    <text x="292" y="92" dominant-baseline="middle">JavaScript</text>
-    <text x="588" y="92" dominant-baseline="middle" text-anchor="end" class="muted">5.0%</text>
+    <text x="292" y="92" dominant-baseline="middle">Python</text>
+    <text x="588" y="92" dominant-baseline="middle" text-anchor="end" class="muted">7.3%</text>
     <circle cx="276" cy="116" r="5" fill="#f3bf57" />
-    <text x="292" y="116" dominant-baseline="middle">PHP</text>
-    <text x="588" y="116" dominant-baseline="middle" text-anchor="end" class="muted">4.0%</text>
+    <text x="292" y="116" dominant-baseline="middle">JavaScript</text>
+    <text x="588" y="116" dominant-baseline="middle" text-anchor="end" class="muted">4.8%</text>
     <circle cx="276" cy="140" r="5" fill="#db78ad" />
-    <text x="292" y="140" dominant-baseline="middle">Python</text>
-    <text x="588" y="140" dominant-baseline="middle" text-anchor="end" class="muted">3.5%</text>
+    <text x="292" y="140" dominant-baseline="middle">PHP</text>
+    <text x="588" y="140" dominant-baseline="middle" text-anchor="end" class="muted">3.8%</text>
     <circle cx="276" cy="164" r="5" fill="#ffb597" />
     <text x="292" y="164" dominant-baseline="middle">CSS</text>
-    <text x="588" y="164" dominant-baseline="middle" text-anchor="end" class="muted">3.2%</text>
+    <text x="588" y="164" dominant-baseline="middle" text-anchor="end" class="muted">3.0%</text>
     <circle cx="276" cy="188" r="5" fill="#ad86e6" />
     <text x="292" y="188" dominant-baseline="middle">Dart</text>
     <text x="588" y="188" dominant-baseline="middle" text-anchor="end" class="muted">1.7%</text>
     <circle cx="276" cy="212" r="5" fill="#a95360" />
     <text x="292" y="212" dominant-baseline="middle">Other</text>
-    <text x="588" y="212" dominant-baseline="middle" text-anchor="end" class="muted">4.8%</text>
+    <text x="588" y="212" dominant-baseline="middle" text-anchor="end" class="muted">4.7%</text>
 </svg>
