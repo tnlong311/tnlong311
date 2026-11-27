@@ -290,6 +290,10 @@ async function main() {
   });
 
   await fs.writeFile("assets/profile-card.svg", svg);
+  const { followers } = await github(`/users/${owner}`);
+  const width = 59 + 8 * String(followers).length;
+  await fs.writeFile("assets/followers.svg", `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="20" role="img" aria-label="GitHub followers: ${followers}"><rect width="${width}" height="20" fill="#0969da"/><rect width="47" height="20" fill="#24292f"/><g fill="white" text-anchor="middle" font-family="Verdana,sans-serif" font-size="11"><text x="23.5" y="14">Follow</text><text x="${(width + 47) / 2}" y="14">${followers}</text></g></svg>`);
+
   const languageToken = process.env.PROFILE_LANGUAGES_TOKEN;
   if (languageToken) {
     try {
